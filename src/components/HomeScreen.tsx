@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
+import { useAudio } from "@/contexts/AudioContext";
 
 interface HomeScreenProps {
   onStart: (name: string) => void;
@@ -9,10 +10,12 @@ interface HomeScreenProps {
 export default function HomeScreen({ onStart }: HomeScreenProps) {
   const [name, setName] = useState("");
   const [showRules, setShowRules] = useState(false);
+  const { playSFX } = useAudio();
 
   const handleStart = () => {
     const trimmed = name.trim();
     if (!trimmed) return;
+    playSFX("notify");
     onStart(trimmed);
   };
 
@@ -20,16 +23,21 @@ export default function HomeScreen({ onStart }: HomeScreenProps) {
     <div className="relative w-full h-screen flex items-center justify-center overflow-hidden">
       {/* Background */}
       <Image
-        src="/assets/img/bgmanhinhchinh.png"
+        src="/assets/img/menubackground.png"
         alt="background"
         fill
         className="object-cover"
         priority
       />
+      {/* Phủ mờ background */}
+      <div className="absolute inset-0 bg-black/40 z-0" />
 
       {/* ? button top-right */}
       <button
-        onClick={() => setShowRules(true)}
+        onClick={() => {
+          playSFX("notify");
+          setShowRules(true);
+        }}
         className="absolute top-5 right-5 z-20 w-10 h-10 rounded-full bg-yellow-400 text-black font-bold text-xl shadow-lg hover:bg-yellow-300 transition-all border-2 border-yellow-700 flex items-center justify-center"
         title="Luật chơi"
       >
@@ -48,8 +56,8 @@ export default function HomeScreen({ onStart }: HomeScreenProps) {
         </div>
 
         {/* Name input */}
-        <div className="flex flex-col gap-2 w-full">
-          <label className="text-yellow-200 text-sm font-medium tracking-wide">Tên người chơi</label>
+        <div className="flex flex-col gap-2 w-full items-center">
+          <label className="text-yellow-200 text-sm font-medium tracking-wide text-center">Tên người chơi</label>
           <input
             type="text"
             value={name}
@@ -57,7 +65,7 @@ export default function HomeScreen({ onStart }: HomeScreenProps) {
             onKeyDown={e => e.key === "Enter" && handleStart()}
             placeholder="Nhập tên của bạn..."
             maxLength={20}
-            className="w-full px-4 py-3 rounded-xl bg-white/10 border border-yellow-500/50 text-white placeholder-white/40 text-base outline-none focus:border-yellow-400 focus:bg-white/15 transition-all"
+            className="w-full px-4 py-3 rounded-xl bg-white/10 border border-yellow-500/50 text-white placeholder-white/40 text-base outline-none focus:border-yellow-400 focus:bg-white/15 transition-all text-center"
           />
         </div>
 
@@ -73,7 +81,13 @@ export default function HomeScreen({ onStart }: HomeScreenProps) {
         {/* Rules hint */}
         <p className="text-white/40 text-xs">
           Nhấn{" "}
-          <button onClick={() => setShowRules(true)} className="text-yellow-400 underline hover:text-yellow-300">
+          <button 
+            onClick={() => {
+              playSFX("notify");
+              setShowRules(true);
+            }} 
+            className="text-yellow-400 underline hover:text-yellow-300"
+          >
             ?
           </button>{" "}
           để xem luật chơi
@@ -98,7 +112,10 @@ export default function HomeScreen({ onStart }: HomeScreenProps) {
               className="w-full h-auto rounded-xl shadow-2xl border-2 border-yellow-500"
             />
             <button
-              onClick={() => setShowRules(false)}
+              onClick={() => {
+                playSFX("notify");
+                setShowRules(false);
+              }}
               className="absolute top-2 right-2 w-9 h-9 rounded-full bg-red-600 hover:bg-red-500 text-white font-bold text-lg flex items-center justify-center shadow-lg"
             >
               ✕
